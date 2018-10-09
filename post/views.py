@@ -38,14 +38,18 @@ def read_post(request):
 
 
 def delete_post(request):
-    return render(request,'delete_post.html')
+    post_id = int(request.GET.get('post_id'))
+    Post.objects.get(pk=post_id).delete()
+    return redirect('/')
 
 
 def post_list(request):
-    return render(request,'post_list.html')
+    posts = Post.objects.all().order_by('-id')
+    return render(request,'post_list.html',{'posts':posts})
 
 
 def search(request):
+    
     return render(request,'search.html')
 
 

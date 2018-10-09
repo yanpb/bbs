@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
+from math import ceil
+
+
 
 from django.shortcuts import render,redirect
 
@@ -44,8 +46,17 @@ def delete_post(request):
 
 
 def post_list(request):
-    posts = Post.objects.all().order_by('-id')
-    return render(request,'post_list.html',{'posts':posts})
+    page = int(request.GET.get('page', 1))  # 当前页码
+    total = Post.objects.count()         # 帖子总数
+    per_page = 4                      # 每页帖子数
+    pages = ceil(total / per_page)       # 总页数
+
+    start = (page - 1) * per_page  # 当前页开始的索引
+    end = start + per_page         # 当前页结束的索引
+    posts = Post.objects.all().order_by('-id')[start:end]
+
+    return render(request, 'post_list.html',
+                  {'posts': posts, 'pages': range(pages)})
 
 
 def search(request):
